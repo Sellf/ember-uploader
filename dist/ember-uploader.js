@@ -11,17 +11,17 @@ var define, requireModule, require, requirejs;
   } else {
     _isArray = Array.isArray;
   }
-  
+
   var registry = {}, seen = {}, state = {};
   var FAILED = false;
 
   define = function(name, deps, callback) {
-  
+
     if (!_isArray(deps)) {
       callback = deps;
       deps     =  [];
     }
-  
+
     registry[name] = {
       deps: deps,
       callback: callback
@@ -173,11 +173,11 @@ define("ember-uploader/s3",
           self.didSign(json);
           var url = null;
           if (json.region) {
-            url = "//s3-" + json.region + ".amazonaws.com/" + json.bucket;
+            url = "https://s3-" + json.region + ".amazonaws.com/" + json.bucket;
             delete json.region;
           }
           else {
-            url = "//" + json.bucket + ".s3.amazonaws.com";
+            url = "https://" + json.bucket + ".s3.amazonaws.com";
           }
           var formData = self.setupFormData(file, json);
 
@@ -186,7 +186,7 @@ define("ember-uploader/s3",
           self.didUpload(respData);
           return respData;
         });
-      },  
+      },
 
       sign: function(file, data) {
         data = data || {};
@@ -292,7 +292,7 @@ define("ember-uploader/uploader",
       didError: function(jqXHR, textStatus, errorThrown) {
         set(this, 'isUploading', false);
         this.trigger('didError', jqXHR, textStatus, errorThrown);
-      }, 
+      },
 
       didProgress: function(e) {
         e.percent = e.loaded / e.total * 100;

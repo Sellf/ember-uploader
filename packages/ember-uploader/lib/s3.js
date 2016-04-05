@@ -25,11 +25,11 @@ export default Uploader.extend({
       self.didSign(json);
       var url = null;
       if (json.region) {
-        url = "//s3-" + json.region + ".amazonaws.com/" + json.bucket;
+        url = "https://s3-" + json.region + ".amazonaws.com/" + json.bucket;
         delete json.region;
       }
       else {
-        url = "//" + json.bucket + ".s3.amazonaws.com";
+        url = "https://" + json.bucket + ".s3.amazonaws.com";
       }
       var formData = self.setupFormData(file, json);
 
@@ -38,7 +38,7 @@ export default Uploader.extend({
       self.didUpload(respData);
       return respData;
     });
-  },  
+  },
 
   sign: function(file, data) {
     data = data || {};
