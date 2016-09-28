@@ -120,8 +120,7 @@ define("ember-uploader/s3",
           headers: get(this, 'headers'),
           type: 'POST',
           contentType: 'application/json',
-          data: data,
-          dataType: 'json'
+          data: JSON.stringify(data)
         };
 
         return this._ajax(settings);
