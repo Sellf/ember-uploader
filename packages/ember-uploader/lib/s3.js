@@ -89,5 +89,5 @@ export default Uploader.extend({
     };
 
     return this._ajax(settings);
-  };
+  }
 });

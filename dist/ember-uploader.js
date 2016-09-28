@@ -11,17 +11,17 @@ var define, requireModule, require, requirejs;
   } else {
     _isArray = Array.isArray;
   }
-
+  
   var registry = {}, seen = {}, state = {};
   var FAILED = false;
 
   define = function(name, deps, callback) {
-
+  
     if (!_isArray(deps)) {
       callback = deps;
       deps     =  [];
     }
-
+  
     registry[name] = {
       deps: deps,
       callback: callback
@@ -188,6 +188,23 @@ define("ember-uploader/s3",
         });
       },
 
+      pyupload: function(file, data) {
+        var self = this;
+
+        set(this, 'isUploading', true);
+
+        return this.pysign(file, data).then(function(json) {
+          self.didSign(json);
+          var url = json.object.url.split("amazonaws.com")[0] + "amazonaws.com/";
+          var formData = self.setupFormData(file, json.upload_params);
+
+          return self.ajax(url, formData);
+        }).then(function(respData) {
+          self.didUpload(respData);
+          return respData;
+        });
+      },
+
       sign: function(file, data) {
         data = data || {};
         data.name = file.name;
@@ -200,6 +217,23 @@ define("ember-uploader/s3",
           type: 'GET',
           contentType: 'json',
           data: data
+        };
+
+        return this._ajax(settings);
+      },
+
+      pysign: function(file, data) {
+        data = data || {};
+        data.name = file.name;
+        data.size = file.size;
+
+        var settings = {
+          url: get(this, 'url'),
+          headers: get(this, 'headers'),
+          type: 'POST',
+          contentType: 'application/json',
+          data: data,
+          dataType: 'json'
         };
 
         return this._ajax(settings);
@@ -292,7 +326,7 @@ define("ember-uploader/uploader",
       didError: function(jqXHR, textStatus, errorThrown) {
         set(this, 'isUploading', false);
         this.trigger('didError', jqXHR, textStatus, errorThrown);
-      },
+      }, 
 
       didProgress: function(e) {
         e.percent = e.loaded / e.total * 100;
